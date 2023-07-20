@@ -105,11 +105,7 @@ resource "aws_instance" "dev_node" {
     instance_type = "t2.micro"
     ami = data.aws_ami.server_ami.id
     # this is from the datasources.tf file and note data must be prepended unlike resources
-
-    tags = {
-        Name = "dev-node"
-    }
-
+    
     key_name = aws_key_pair.mtc_auth.id
     # see above
     # note: run terraform state show aws_key_pair.mtc_auth
@@ -118,10 +114,40 @@ resource "aws_instance" "dev_node" {
     vpc_security_group_ids = [aws_security_group.mtc_sg.id]
     # see above for security group
     subnet_id = aws_subnet.mtc_public_subnet.id
+    # see above for subnet
+
+    # extract the contents of the userdata.tpl in root directory
+    # this data is required to set up docker engine and install dependencies
+    # on the EC2 linux node to bootstrap it.
+    # use the terraform file function again.
+    user_data = file("userdata.tpl")
 
     root_block_device {
         volume_size =10
         # 8 is default but 10 is still free-tier
         # this will give us a larger hard drive
+    }
+
+    tags = {
+        Name = "dev-node"
+    }
+
+    # https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax
+    # note that the provisioner is inside of the aws_instance resource
+    provisioner "local-exec" {
+        # https://developer.hashicorp.com/terraform/language/functions/templatefile
+        #command = templatefile("windows-ssh-config.tpl")
+        command = templatefile("linux-mac-ssh-config.tpl", {
+            hostname = self.public_ip,
+            user = "ubuntu",
+            identityfile = "~/.ssh/mtckey"
+            # identityfile is the private key from the keypair that we created
+        })
+        # note the () wraps the {}
+        # interpreter defaults to bash
+        # windows::
+        #interpreter = ["Powershell", "-Command"]
+        # linux, mac::
+        interpreter = ["bash", "-c"]
     }
 }
