@@ -137,7 +137,12 @@ resource "aws_instance" "dev_node" {
     provisioner "local-exec" {
         # https://developer.hashicorp.com/terraform/language/functions/templatefile
         #command = templatefile("windows-ssh-config.tpl")
-        command = templatefile("linux-mac-ssh-config.tpl", {
+        #command = templatefile("linux-mac-ssh-config.tpl", {
+        # add interopolation syntax for variable for operating system
+        # variables in terraform are of the form *** var. **** 
+        # see variables.tf file    Here we are interpolating var.host_os for the operating system.
+        # https://developer.hashicorp.com/terraform/language/values/variables
+        command = templatefile("${var.host_os}-ssh-config.tpl", {
             hostname = self.public_ip,
             user = "ubuntu",
             identityfile = "~/.ssh/mtckey"
@@ -148,6 +153,9 @@ resource "aws_instance" "dev_node" {
         # windows::
         #interpreter = ["Powershell", "-Command"]
         # linux, mac::
-        interpreter = ["bash", "-c"]
+        #interpreter = ["bash", "-c"]
+        # https://developer.hashicorp.com/terraform/language/expressions/conditionals
+        # use a conditional for the interpreter. Iff linux-mac use bash, if not use Powershell
+        interpreter = var.host_os == "linux-mac" ? ["bash", "-c"] : ["Powershell", "-Command"]
     }
 }
