@@ -80,7 +80,7 @@ resource "aws_security_group" "mtc_sg" {
     protocol  = "-1"
     # this means any protocol
 
-    cidr_blocks = [98.234.0.0/16]
+    cidr_blocks = ["98.234.0.0/16"]
     #cidr_blocks = ["98.234.32.176/32"]
     # [] because this can be a comma separated list
     # NOTE that this original IP address changed after the 7/25 internet outage.
