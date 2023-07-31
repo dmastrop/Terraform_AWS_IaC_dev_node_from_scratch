@@ -79,8 +79,13 @@ resource "aws_security_group" "mtc_sg" {
     to_port   = 0
     protocol  = "-1"
     # this means any protocol
-    cidr_blocks = ["98.234.32.176/32"]
+
+    cidr_blocks = [98.234.0.0/16]
+    #cidr_blocks = ["98.234.32.176/32"]
     # [] because this can be a comma separated list
+    # NOTE that this original IP address changed after the 7/25 internet outage.
+    # the new IP address of my PC is 98.234.160.157.  To avoid having to change this
+    # for each new outage, expand the CIDR block to 98.234.0.0/16
   }
 
   egress {
