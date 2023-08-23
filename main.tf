@@ -21,7 +21,7 @@ resource "aws_subnet" "mtc_public_subnet" {
   # the item is "id" and this needs to be appended at the end.
   # vpc_id = aws_vpc.mtc_vpc.id   id is the attribute we need.
   cidr_block = "10.123.1.0/24"
-  # this is a subnet within the vpn cidr_block (see above)
+  # this is a subnet within the vpn cidr_block (see above).
   map_public_ip_on_launch = true
   # it will be assigned a public ip address that we will be able to SSH to.
   availability_zone = "us-west-1a"
