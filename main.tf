@@ -14,7 +14,7 @@ resource "aws_vpc" "mtc_vpc" {
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet
 resource "aws_subnet" "mtc_public_subnet" {
   vpc_id = aws_vpc.mtc_vpc.id
-  # to access vpc_id resource, need a resource id.
+  # to access vpc_id resource, need a resource id.....
   # we can get the reference id using the "terfaform state list" command.
   # aws_vpc.mtc_vpc is how we can reference the vpc
   # do not quote this. It is NOT a string.
